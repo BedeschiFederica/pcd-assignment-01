@@ -1,5 +1,9 @@
 package pcd.ass01;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+
 public class BoidsSimulation {
 
 	final static int N_BOIDS = 1500;
@@ -26,9 +30,24 @@ public class BoidsSimulation {
     					MAX_SPEED,
     					PERCEPTION_RADIUS,
     					AVOID_RADIUS); 
-    	var sim = new BoidsSimulator(model);
+    	//var sim = new BoidsSimulator(model);
+		final int nWorkers = Runtime.getRuntime().availableProcessors() + 1;
+		final int size = N_BOIDS / nWorkers;
+		CyclicBarrier barrier = new CyclicBarrier(nWorkers);
+		List<Worker> workers = new ArrayList<>();
+		for (int i = 0; i < nWorkers; i++) {
+			final int start = i * size;
+			final int end = (i != nWorkers - 1) ? (i + 1) * size : N_BOIDS;
+			workers.add(new Worker(model, barrier, start, end));
+		}
     	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
-    	sim.attachView(view);
-    	sim.runSimulation();
+		for (Worker w: workers) {
+			w.attachView(view);
+		}
+		for (Worker w: workers) {
+			w.start();
+		}
+    	//sim.attachView(view);
+    	//sim.runSimulation();
     }
 }

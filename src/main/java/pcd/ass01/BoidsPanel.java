@@ -33,7 +33,7 @@ public class BoidsPanel extends JPanel {
         var boids = model.getBoids();
 
         g.setColor(Color.BLUE);
-        for (Boid boid : boids) {
+        for (SynchBoid boid : boids) {
         	var x = boid.getPos().x();
         	var y = boid.getPos().y();
         	int px = (int)(w/2 + x*xScale);
