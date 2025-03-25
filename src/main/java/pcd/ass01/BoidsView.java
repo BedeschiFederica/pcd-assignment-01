@@ -9,89 +9,90 @@ import java.util.Hashtable;
 
 public class BoidsView implements ChangeListener {
 
-	private JFrame frame;
-	private BoidsPanel boidsPanel;
-	private JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private BoidsModel model;
-	private int width, height;
-	
+	private final JFrame frame;
+	private final BoidsPanel boidsPanel;
+	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private final BoidsModel model;
+	private final int width, height;
+
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
 		this.width = width;
 		this.height = height;
-		
-		frame = new JFrame("Boids Simulation");
-        frame.setSize(width, height);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		JPanel cp = new JPanel();
-		LayoutManager layout = new BorderLayout();
+		this.frame = new JFrame("Boids Simulation");
+        this.frame.setSize(this.width, this.height);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		final JPanel cp = new JPanel();
+		final LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
 
-        boidsPanel = new BoidsPanel(this, model);
-		cp.add(BorderLayout.CENTER, boidsPanel);
+        this.boidsPanel = new BoidsPanel(this, this.model);
+		cp.add(BorderLayout.CENTER, this.boidsPanel);
 
-        JPanel slidersPanel = new JPanel();
-        
-        cohesionSlider = makeSlider();
-        separationSlider = makeSlider();
-        alignmentSlider = makeSlider();
-        
+        final JPanel slidersPanel = new JPanel();
+
+        this.cohesionSlider = makeSlider();
+		this.separationSlider = makeSlider();
+		this.alignmentSlider = makeSlider();
+
         slidersPanel.add(new JLabel("Separation"));
-        slidersPanel.add(separationSlider);
+        slidersPanel.add(this.separationSlider);
         slidersPanel.add(new JLabel("Alignment"));
-        slidersPanel.add(alignmentSlider);
+        slidersPanel.add(this.alignmentSlider);
         slidersPanel.add(new JLabel("Cohesion"));
-        slidersPanel.add(cohesionSlider);
-		        
+        slidersPanel.add(this.cohesionSlider);
+
 		cp.add(BorderLayout.SOUTH, slidersPanel);
 
-		frame.setContentPane(cp);	
-		
-        frame.setVisible(true);
+		this.frame.setContentPane(cp);
+
+		this.frame.setVisible(true);
 	}
 
 	private JSlider makeSlider() {
-		var slider = new JSlider(JSlider.HORIZONTAL, 0, 20, 10);        
+		final JSlider slider = new JSlider(JSlider.HORIZONTAL, 0,20, 10);
 		slider.setMajorTickSpacing(10);
 		slider.setMinorTickSpacing(1);
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
-		Hashtable labelTable = new Hashtable<>();
-		labelTable.put( 0, new JLabel("0") );
-		labelTable.put( 10, new JLabel("1") );
-		labelTable.put( 20, new JLabel("2") );
-		slider.setLabelTable( labelTable );
+		final Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+		labelTable.put(0, new JLabel("0"));
+		labelTable.put(10, new JLabel("1"));
+		labelTable.put(20, new JLabel("2"));
+		slider.setLabelTable(labelTable);
 		slider.setPaintLabels(true);
         slider.addChangeListener(this);
 		return slider;
 	}
-	
-	public void update(int frameRate) {
-		boidsPanel.setFrameRate(frameRate);
-		boidsPanel.repaint();
+
+	public void update(final int frameRate) {
+		this.boidsPanel.setFrameRate(frameRate);
+		this.boidsPanel.repaint();
 	}
 
 	@Override
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource() == separationSlider) {
-			var val = separationSlider.getValue();
-			model.setSeparationWeight(0.1*val);
-		} else if (e.getSource() == cohesionSlider) {
-			var val = cohesionSlider.getValue();
-			model.setCohesionWeight(0.1*val);
+	public void stateChanged(final ChangeEvent e) {
+		int val;
+		if (e.getSource() == this.separationSlider) {
+			val = this.separationSlider.getValue();
+			this.model.setSeparationWeight(0.1 * val);
+		} else if (e.getSource() == this.cohesionSlider) {
+			val = this.cohesionSlider.getValue();
+			model.setCohesionWeight(0.1 * val);
 		} else {
-			var val = alignmentSlider.getValue();
-			model.setAlignmentWeight(0.1*val);
+			val = this.alignmentSlider.getValue();
+			this.model.setAlignmentWeight(0.1 * val);
 		}
 	}
 	
 	public int getWidth() {
-		return width;
+		return this.width;
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
 }
