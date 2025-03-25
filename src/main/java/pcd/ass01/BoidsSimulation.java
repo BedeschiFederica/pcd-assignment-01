@@ -31,22 +31,29 @@ public class BoidsSimulation {
     					PERCEPTION_RADIUS,
     					AVOID_RADIUS); 
     	//var sim = new BoidsSimulator(model);
-		final int nWorkers = Runtime.getRuntime().availableProcessors() + 1;
+		var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
+		final int nWorkers = Runtime.getRuntime().availableProcessors();
 		final int size = N_BOIDS / nWorkers;
-		CyclicBarrier barrier = new CyclicBarrier(nWorkers);
-		List<Worker> workers = new ArrayList<>();
+		Runnable barrierAction = new NearbyWorker(model);
+		CyclicBarrier barrierVel = new CyclicBarrier(nWorkers + 1);
+		CyclicBarrier barrierPos = new CyclicBarrier(nWorkers + 1, barrierAction);
+		GUIWorker guiWorker = new GUIWorker(model, barrierVel, barrierPos);
+		guiWorker.attachView(view);
+		List<ComputeWorker> workers = new ArrayList<>();
 		for (int i = 0; i < nWorkers; i++) {
 			final int start = i * size;
 			final int end = (i != nWorkers - 1) ? (i + 1) * size : N_BOIDS;
-			workers.add(new Worker(model, barrier, start, end));
+			workers.add(new ComputeWorker(model, barrierVel, barrierPos, start, end));
 		}
-    	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
-		for (Worker w: workers) {
+		//GUIWorker guiWorker = new GUIWorker(model, barrierVel, barrierPos);
+		/*for (ComputeWorker w: workers) {
 			w.attachView(view);
-		}
-		for (Worker w: workers) {
+		}*/
+		//guiWorker.attachView(view);
+		for (ComputeWorker w: workers) {
 			w.start();
 		}
+		guiWorker.start();
     	//sim.attachView(view);
     	//sim.runSimulation();
     }

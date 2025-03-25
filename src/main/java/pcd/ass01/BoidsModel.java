@@ -1,12 +1,11 @@
 package pcd.ass01;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class BoidsModel {
     
     private final List<SynchBoid> boids;
+    private final Map<Pair<SynchBoid, SynchBoid>, Double> distances = new HashMap<>();
     private double separationWeight; 
     private double alignmentWeight; 
     private double cohesionWeight; 
@@ -41,6 +40,15 @@ public class BoidsModel {
         	boids.add(new SynchBoid(pos, vel));
         }
 
+        for (SynchBoid boid : this.getBoids()) {
+            for (SynchBoid other : this.getBoids()) {
+                if (other != boid) {
+                    P2d otherPos = other.getPos();
+                    double distance = boid.getPos().distance(otherPos);
+                    this.putDistance(new Pair<>(boid, other), distance);
+                }
+            }
+        }
     }
     
     public synchronized List<SynchBoid> getBoids(){
@@ -49,6 +57,14 @@ public class BoidsModel {
 
     public synchronized List<SynchBoid> getPartitionedBoids(final int start, final int end) {
         return this.boids.subList(start, end);
+    }
+
+    public synchronized Map<Pair<SynchBoid, SynchBoid>, Double> getDistances() {
+        return this.distances;
+    }
+
+    public synchronized void putDistance(final Pair<SynchBoid, SynchBoid> pair, final double distance) {
+        this.distances.put(pair, distance);
     }
     
     public synchronized double getMinX() {

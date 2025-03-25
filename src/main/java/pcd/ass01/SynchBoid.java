@@ -2,6 +2,7 @@ package pcd.ass01;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,8 +42,9 @@ public class SynchBoid {
 			this.mutex.lock();*/
 
 			/* change velocity vector according to separation, alignment, cohesion */
-
+			var t0 = System.nanoTime();
 			List<SynchBoid> nearbyBoids = getNearbyBoids(model);
+			//System.out.println("t1 - t0: " + (System.nanoTime() - t0));
 
 			V2d separation = calculateSeparation(nearbyBoids, model);
 			V2d alignment = calculateAlignment(nearbyBoids, model);
@@ -80,7 +82,13 @@ public class SynchBoid {
 
 	private List<SynchBoid> getNearbyBoids(BoidsModel model) {
 		var list = new ArrayList<SynchBoid>();
+		final Map<Pair<SynchBoid, SynchBoid>, Double> distances = model.getDistances();
 		for (SynchBoid other : model.getBoids()) {
+			if (other != this && distances.get(new Pair<>(this, other)) < model.getPerceptionRadius()) {
+				list.add(other);
+			}
+		}
+		/*for (SynchBoid other : model.getBoids()) {
 			if (other != this) {
 				P2d otherPos = other.getPos();
 				double distance = pos.distance(otherPos);
@@ -88,25 +96,30 @@ public class SynchBoid {
 					list.add(other);
 				}
 			}
-		}
+		}*/
 		return list;
 	}
 
 	private V2d calculateAlignment(List<SynchBoid> nearbyBoids, BoidsModel model) {
-		double avgVx = 0;
-		double avgVy = 0;
-		if (!nearbyBoids.isEmpty()) {
-			for (SynchBoid other : nearbyBoids) {
-				V2d otherVel = other.getVel();
-				avgVx += otherVel.x();
-				avgVy += otherVel.y();
+		/*try {
+			this.mutex.lock();*/
+			double avgVx = 0;
+			double avgVy = 0;
+			if (!nearbyBoids.isEmpty()) {
+				for (SynchBoid other : nearbyBoids) {
+					V2d otherVel = other.getVel();
+					avgVx += otherVel.x();
+					avgVy += otherVel.y();
+				}
+				avgVx /= nearbyBoids.size();
+				avgVy /= nearbyBoids.size();
+				return new V2d(avgVx - vel.x(), avgVy - vel.y()).getNormalized();
+			} else {
+				return new V2d(0, 0);
 			}
-			avgVx /= nearbyBoids.size();
-			avgVy /= nearbyBoids.size();
-			return new V2d(avgVx - vel.x(), avgVy - vel.y()).getNormalized();
-		} else {
-			return new V2d(0, 0);
-		}
+		/*} finally {
+			this.mutex.unlock();
+		}*/
 	}
 
 	private V2d calculateCohesion(List<SynchBoid> nearbyBoids, BoidsModel model) {

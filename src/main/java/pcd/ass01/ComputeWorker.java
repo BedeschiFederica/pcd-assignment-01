@@ -4,10 +4,11 @@ import java.util.Optional;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-public class Worker extends Thread {
+public class ComputeWorker extends Thread {
 
 	private final BoidsModel model;
-	private final CyclicBarrier barrier;
+	private final CyclicBarrier barrierVel;
+	private final CyclicBarrier barrierPos;
 	private final int start;
 	private final int end;
 	private Optional<BoidsView> view;
@@ -15,10 +16,12 @@ public class Worker extends Thread {
 	private static final int FRAMERATE = 25;
 	private int framerate;
 
-	public Worker(final BoidsModel model, final CyclicBarrier barrier, final int start, final int end) {
+	public ComputeWorker(final BoidsModel model, final CyclicBarrier barrierVel, final CyclicBarrier barrierPos,
+						 final int start, final int end) {
 		super("worker");
 		this.model = model;
-		this.barrier = barrier;
+		this.barrierVel = barrierVel;
+		this.barrierPos = barrierPos;
 		this.start = start;
 		this.end = end;
 		this.view = Optional.empty();
@@ -29,26 +32,29 @@ public class Worker extends Thread {
 	}
 
 	public void run() {
+		log(this.start + " -> " + this.end);
 		while (true) {
 			var t0 = System.currentTimeMillis();
 			var boids = this.model.getPartitionedBoids(this.start, this.end);
 
+			//log("Size: " +boids.size());
 			/*
 			 * Improved correctness: first update velocities...
 			 */
 			for (SynchBoid boid : boids) {
 				boid.updateVelocity(model);
 			}
+			//log("t1 - t0: " + (System.currentTimeMillis() - t0));
 
-			log("wait1");
+			log("wait vel");
             try {
-                this.barrier.await();
+                this.barrierVel.await();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (BrokenBarrierException e) {
                 throw new RuntimeException(e);
             }
-			log("continue1");
+			log("update pos");
 
             /*
 			 * ..then update positions
@@ -57,33 +63,30 @@ public class Worker extends Thread {
 				boid.updatePos(model);
 			}
 
-			if (view.isPresent()) {
-				view.get().update(framerate);
-				var t1 = System.currentTimeMillis();
-				var dtElapsed = t1 - t0;
-				var framratePeriod = 1000 / FRAMERATE;
-				log(dtElapsed + " " + framratePeriod);
-
-				if (dtElapsed < framratePeriod) {
-					try {
-						Thread.sleep(framratePeriod - dtElapsed);
-					} catch (Exception ex) {
-					}
-					framerate = FRAMERATE;
-				} else {
-					framerate = (int) (1000 / dtElapsed);
-				}
-			}
-
-			log("wait2");
+			log("wait pos");
 			try {
-				this.barrier.await();
+				this.barrierPos.await();
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			} catch (BrokenBarrierException e) {
 				throw new RuntimeException(e);
 			}
-			log("continue2");
+			log("update vel");
+
+			var t1 = System.currentTimeMillis();
+			var dtElapsed = t1 - t0;
+			var frameratePeriod = 1000 / FRAMERATE;
+			log(dtElapsed + " " + frameratePeriod);
+
+			if (dtElapsed < frameratePeriod) {
+				try {
+					Thread.sleep(frameratePeriod - dtElapsed);
+				} catch (Exception ex) {
+				}
+				framerate = FRAMERATE;
+			} else {
+				framerate = (int) (1000 / dtElapsed);
+			}
 		}
 	}
 	
