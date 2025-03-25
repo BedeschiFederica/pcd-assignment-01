@@ -11,7 +11,7 @@ public class GUIWorker extends Thread {
     private final CyclicBarrier barrierPos;
     private Optional<BoidsView> view;
 
-    private static final int FRAMERATE = 25;
+    private static final int FRAMERATE = 50;
     private int framerate;
 
     public GUIWorker(final BoidsModel model, final CyclicBarrier barrierVel, final CyclicBarrier barrierPos) {

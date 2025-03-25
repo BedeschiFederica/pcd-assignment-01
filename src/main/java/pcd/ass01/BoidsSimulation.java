@@ -6,7 +6,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulation {
 
-	final static int N_BOIDS = 1500;
+	final static int N_BOIDS = 4500;
 
 	final static double SEPARATION_WEIGHT = 1.0;
     final static double ALIGNMENT_WEIGHT = 1.0;
@@ -34,9 +34,9 @@ public class BoidsSimulation {
 		var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
 		final int nWorkers = Runtime.getRuntime().availableProcessors();
 		final int size = N_BOIDS / nWorkers;
-		Runnable barrierAction = new NearbyWorker(model);
+		//Runnable barrierAction = new NearbyWorker(model);
 		CyclicBarrier barrierVel = new CyclicBarrier(nWorkers + 1);
-		CyclicBarrier barrierPos = new CyclicBarrier(nWorkers + 1, barrierAction);
+		CyclicBarrier barrierPos = new CyclicBarrier(nWorkers + 1);// barrierAction);
 		GUIWorker guiWorker = new GUIWorker(model, barrierVel, barrierPos);
 		guiWorker.attachView(view);
 		List<ComputeWorker> workers = new ArrayList<>();

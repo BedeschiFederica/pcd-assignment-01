@@ -5,7 +5,7 @@ import java.util.*;
 public class BoidsModel {
     
     private final List<SynchBoid> boids;
-    private final Map<Pair<SynchBoid, SynchBoid>, Double> distances = new HashMap<>();
+    private final Map<SynchBoid, List<SynchBoid>> nearBoids = new HashMap<>();
     private double separationWeight; 
     private double alignmentWeight; 
     private double cohesionWeight; 
@@ -41,53 +41,57 @@ public class BoidsModel {
         }
 
         for (SynchBoid boid : this.getBoids()) {
+            final List<SynchBoid> list = new ArrayList<>();
             for (SynchBoid other : this.getBoids()) {
                 if (other != boid) {
                     P2d otherPos = other.getPos();
                     double distance = boid.getPos().distance(otherPos);
-                    this.putDistance(new Pair<>(boid, other), distance);
+                    if (distance < this.getPerceptionRadius()) {
+                        list.add(other);
+                    }
                 }
             }
+            this.nearBoids.put(boid, list);
         }
     }
     
-    public synchronized List<SynchBoid> getBoids(){
+    public List<SynchBoid> getBoids(){
     	return List.copyOf(this.boids);
     }
 
-    public synchronized List<SynchBoid> getPartitionedBoids(final int start, final int end) {
+    public List<SynchBoid> getPartitionedBoids(final int start, final int end) {
         return this.boids.subList(start, end);
     }
 
-    public synchronized Map<Pair<SynchBoid, SynchBoid>, Double> getDistances() {
-        return this.distances;
+    public synchronized List<SynchBoid> getNearBoids(final SynchBoid boid) {
+        return nearBoids.get(boid);
     }
 
-    public synchronized void putDistance(final Pair<SynchBoid, SynchBoid> pair, final double distance) {
-        this.distances.put(pair, distance);
+    public synchronized void setNearBoids(final SynchBoid boid, final List<SynchBoid> list) {
+        this.nearBoids.put(boid, list);
     }
-    
-    public synchronized double getMinX() {
+
+    public double getMinX() {
     	return -width/2;
     }
 
-    public synchronized double getMaxX() {
+    public double getMaxX() {
     	return width/2;
     }
 
-    public synchronized double getMinY() {
+    public double getMinY() {
     	return -height/2;
     }
 
-    public synchronized double getMaxY() {
+    public double getMaxY() {
     	return height/2;
     }
     
-    public synchronized double getWidth() {
+    public double getWidth() {
     	return width;
     }
  
-    public synchronized double getHeight() {
+    public double getHeight() {
     	return height;
     }
 
@@ -103,27 +107,27 @@ public class BoidsModel {
     	this.cohesionWeight = value;
     }
 
-    public synchronized double getSeparationWeight() {
+    public double getSeparationWeight() {
     	return separationWeight;
     }
 
-    public synchronized double getCohesionWeight() {
+    public double getCohesionWeight() {
     	return cohesionWeight;
     }
 
-    public synchronized double getAlignmentWeight() {
+    public double getAlignmentWeight() {
     	return alignmentWeight;
     }
     
-    public synchronized double getMaxSpeed() {
+    public double getMaxSpeed() {
     	return maxSpeed;
     }
 
-    public synchronized double getAvoidRadius() {
+    public double getAvoidRadius() {
     	return avoidRadius;
     }
 
-    public synchronized double getPerceptionRadius() {
+    public double getPerceptionRadius() {
     	return perceptionRadius;
     }
 }

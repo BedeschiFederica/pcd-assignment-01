@@ -3,7 +3,6 @@ package pcd.ass01;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -82,13 +81,13 @@ public class SynchBoid {
 
 	private List<SynchBoid> getNearbyBoids(BoidsModel model) {
 		var list = new ArrayList<SynchBoid>();
-		final Map<Pair<SynchBoid, SynchBoid>, Double> distances = model.getDistances();
+		/*final Map<Pair<SynchBoid, SynchBoid>, Double> distances = model.getNearBoids();
 		for (SynchBoid other : model.getBoids()) {
 			if (other != this && distances.get(new Pair<>(this, other)) < model.getPerceptionRadius()) {
 				list.add(other);
 			}
-		}
-		/*for (SynchBoid other : model.getBoids()) {
+		}*/
+		for (SynchBoid other : model.getBoids()) {
 			if (other != this) {
 				P2d otherPos = other.getPos();
 				double distance = pos.distance(otherPos);
@@ -96,8 +95,9 @@ public class SynchBoid {
 					list.add(other);
 				}
 			}
-		}*/
+		}
 		return list;
+		//return model.getNearBoids(this);
 	}
 
 	private V2d calculateAlignment(List<SynchBoid> nearbyBoids, BoidsModel model) {

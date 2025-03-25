@@ -1,6 +1,7 @@
 package pcd.ass01;
 
-import java.util.concurrent.BrokenBarrierException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NearbyWorker implements Runnable {
 
@@ -32,14 +33,18 @@ public class NearbyWorker implements Runnable {
         }
         log("update GUI");*/
 
-        for (SynchBoid boid : model.getBoids()) {
-            for (SynchBoid other : model.getBoids()) {
+        for (SynchBoid boid : this.model.getBoids()) {
+            final List<SynchBoid> list = new ArrayList<>();
+            for (SynchBoid other : this.model.getBoids()) {
                 if (other != boid) {
                     P2d otherPos = other.getPos();
                     double distance = boid.getPos().distance(otherPos);
-                    this.model.putDistance(new Pair<>(boid, other), distance);
+                    if (distance < this.model.getPerceptionRadius()) {
+                        list.add(other);
+                    }
                 }
             }
+            this.model.setNearBoids(boid, list);
         }
     }
 
