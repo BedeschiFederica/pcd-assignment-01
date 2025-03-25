@@ -14,7 +14,7 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
 
-    public BoidsModel(final int nboids,
+    public BoidsModel(final int nBoids,
                       final double initialSeparationWeight,
                       final double initialAlignmentWeight,
                       final double initialCohesionWeight,
@@ -34,7 +34,7 @@ public class BoidsModel {
         this.avoidRadius = avoidRadius;
 
         this.boids = new ArrayList<>();
-        for (int i = 0; i < nboids; i++) {
+        for (int i = 0; i < nBoids; i++) {
         	final P2d pos = new P2d(-this.width/2 + Math.random() * this.width, -this.height/2 + Math.random() * this.height);
         	final V2d vel = new V2d(Math.random() * this.maxSpeed/2 - this.maxSpeed/4, Math.random() * this.maxSpeed/2 - this.maxSpeed/4);
             this.boids.add(new SynchBoid(pos, vel));
@@ -85,15 +85,15 @@ public class BoidsModel {
     	this.cohesionWeight = value;
     }
 
-    public double getSeparationWeight() {
+    public synchronized double getSeparationWeight() {
     	return this.separationWeight;
     }
 
-    public double getCohesionWeight() {
+    public synchronized double getCohesionWeight() {
     	return this.cohesionWeight;
     }
 
-    public double getAlignmentWeight() {
+    public synchronized double getAlignmentWeight() {
     	return this.alignmentWeight;
     }
     

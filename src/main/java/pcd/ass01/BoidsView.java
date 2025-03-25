@@ -10,45 +10,54 @@ import java.util.Hashtable;
 public class BoidsView implements ChangeListener {
 
 	private final JFrame frame;
+	final JPanel simulationPanel;
 	private final BoidsPanel boidsPanel;
+	private EnteringPanel enteringPanel;
 	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private final BoidsModel model;
+	private final SimulationController controller;
 	private final int width, height;
 
-	public BoidsView(BoidsModel model, int width, int height) {
-		this.model = model;
+	public BoidsView(final SimulationController controller, final int width, final int height) {
+		this.controller = controller;
+
 		this.width = width;
 		this.height = height;
 
 		this.frame = new JFrame("Boids Simulation");
-        this.frame.setSize(this.width, this.height);
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		final JPanel cp = new JPanel();
+		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.simulationPanel = new JPanel();
 		final LayoutManager layout = new BorderLayout();
-		cp.setLayout(layout);
+		this.simulationPanel.setLayout(layout);
 
-        this.boidsPanel = new BoidsPanel(this, this.model);
-		cp.add(BorderLayout.CENTER, this.boidsPanel);
 
-        final JPanel slidersPanel = new JPanel();
+		this.boidsPanel = new BoidsPanel(this, this.controller);
+		this.simulationPanel.add(BorderLayout.CENTER, this.boidsPanel);
 
-        this.cohesionSlider = makeSlider();
+		final JPanel slidersPanel = new JPanel();
+
+		this.cohesionSlider = makeSlider();
 		this.separationSlider = makeSlider();
 		this.alignmentSlider = makeSlider();
 
-        slidersPanel.add(new JLabel("Separation"));
-        slidersPanel.add(this.separationSlider);
-        slidersPanel.add(new JLabel("Alignment"));
-        slidersPanel.add(this.alignmentSlider);
-        slidersPanel.add(new JLabel("Cohesion"));
-        slidersPanel.add(this.cohesionSlider);
+		slidersPanel.add(new JLabel("Separation"));
+		slidersPanel.add(this.separationSlider);
+		slidersPanel.add(new JLabel("Alignment"));
+		slidersPanel.add(this.alignmentSlider);
+		slidersPanel.add(new JLabel("Cohesion"));
+		slidersPanel.add(this.cohesionSlider);
 
-		cp.add(BorderLayout.SOUTH, slidersPanel);
+		this.simulationPanel.add(BorderLayout.SOUTH, slidersPanel);
 
-		this.frame.setContentPane(cp);
+		this.enteringPanel = new EnteringPanel(this, this.controller, this.frame);
+	}
 
-		this.frame.setVisible(true);
+	public void createBoidsPanel() {
+		this.frame.getContentPane().removeAll();
+		this.frame.add(this.simulationPanel);
+		this.frame.revalidate();
+		this.frame.setSize(this.width, this.height);
+		this.frame.repaint();
+		this.frame.setLocationRelativeTo(null);
 	}
 
 	private JSlider makeSlider() {
@@ -77,13 +86,13 @@ public class BoidsView implements ChangeListener {
 		int val;
 		if (e.getSource() == this.separationSlider) {
 			val = this.separationSlider.getValue();
-			this.model.setSeparationWeight(0.1 * val);
+			this.controller.setSeparationWeight(0.1 * val);
 		} else if (e.getSource() == this.cohesionSlider) {
 			val = this.cohesionSlider.getValue();
-			model.setCohesionWeight(0.1 * val);
+			this.controller.setCohesionWeight(0.1 * val);
 		} else {
 			val = this.alignmentSlider.getValue();
-			this.model.setAlignmentWeight(0.1 * val);
+			this.controller.setAlignmentWeight(0.1 * val);
 		}
 	}
 	

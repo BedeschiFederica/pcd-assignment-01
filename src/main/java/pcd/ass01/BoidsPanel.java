@@ -7,11 +7,11 @@ import java.util.List;
 public class BoidsPanel extends JPanel {
 
 	private final BoidsView view;
-	private final BoidsModel model;
+	private final SimulationController controller;
     private int frameRate;
 
-    public BoidsPanel(final BoidsView view, final BoidsModel model) {
-    	this.model = model;
+    public BoidsPanel(final BoidsView view, final SimulationController controller) {
+    	this.controller = controller;
     	this.view = view;
     }
 
@@ -26,12 +26,12 @@ public class BoidsPanel extends JPanel {
         
         final int w = this.view.getWidth();
         final int h = this.view.getHeight();
-        final double envWidth = this.model.getWidth();
+        final double envWidth = this.controller.getWidth();
         final double xScale = w / envWidth;
         // var envHeight = model.getHeight();
         // var yScale = h/envHeight;
 
-        final List<SynchBoid> boids = this.model.getBoids();
+        final List<SynchBoid> boids = this.controller.getBoids();
 
         g.setColor(Color.BLUE);
         for (final SynchBoid boid: boids) {
