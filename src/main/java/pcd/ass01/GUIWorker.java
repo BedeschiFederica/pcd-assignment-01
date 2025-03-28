@@ -1,38 +1,35 @@
 package pcd.ass01;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-
 public class GUIWorker extends Thread {
 
-    //private final CyclicBarrier barrierVel;
-    //private final CyclicBarrier barrierPos;
     private final Barrier barrierVel;
     private final Barrier barrierPos;
     private final BoidsView view;
+    private final Flag stopFlag;
 
     private static final int FRAMERATE = 1000;
     private int frameRate;
 
-    public GUIWorker(final BoidsView view, final Barrier barrierVel, final Barrier barrierPos) { //, final CyclicBarrier barrierVel, final CyclicBarrier barrierPos) {
+    public GUIWorker(final BoidsView view, final Barrier barrierVel, final Barrier barrierPos, final Flag stopFlag) {
         this.view = view;
         this.barrierVel = barrierVel;
         this.barrierPos = barrierPos;
+        this.stopFlag = stopFlag;
     }
 
     public void run() {
-        while (true) {
+        while (!this.stopFlag.isSet()) {
             final long t0 = System.currentTimeMillis();
 
             try {
                 this.barrierVel.await();
-            } catch (final InterruptedException e) { //| BrokenBarrierException e) {
+            } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
             try {
                 this.barrierPos.await();
-            } catch (final InterruptedException e) { //| BrokenBarrierException e) {
+            } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
 

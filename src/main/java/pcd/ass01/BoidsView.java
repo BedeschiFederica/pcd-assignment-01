@@ -10,10 +10,11 @@ import java.util.Hashtable;
 public class BoidsView implements ChangeListener {
 
 	private final JFrame frame;
-	final JPanel simulationPanel;
-	private final BoidsPanel boidsPanel;
+	JPanel simulationPanel;
+	private BoidsPanel boidsPanel;
+	private JPanel buttonsPanel;
 	private EnteringPanel enteringPanel;
-	private final JSlider cohesionSlider, separationSlider, alignmentSlider;
+	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private final SimulationController controller;
 	private final int width, height;
 
@@ -25,10 +26,27 @@ public class BoidsView implements ChangeListener {
 
 		this.frame = new JFrame("Boids Simulation");
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		this.createSimulationPanel();
+
+		this.enteringPanel = new EnteringPanel(this, this.controller, this.frame);
+	}
+
+	public void createSimulationPanel() {
 		this.simulationPanel = new JPanel();
 		final LayoutManager layout = new BorderLayout();
 		this.simulationPanel.setLayout(layout);
 
+		this.buttonsPanel = new JPanel(new FlowLayout());
+		JButton stopButton = new JButton("Stop");
+		stopButton.addActionListener(e -> {
+			this.enteringPanel = new EnteringPanel(this, this.controller, this.frame);
+			this.controller.stopSimulation();
+		});
+		JButton suspendResumeButton = new JButton("Suspend");
+		this.buttonsPanel.add(stopButton);
+		this.buttonsPanel.add(suspendResumeButton);
+		this.simulationPanel.add(BorderLayout.NORTH, this.buttonsPanel);
 
 		this.boidsPanel = new BoidsPanel(this, this.controller);
 		this.simulationPanel.add(BorderLayout.CENTER, this.boidsPanel);
@@ -47,13 +65,11 @@ public class BoidsView implements ChangeListener {
 		slidersPanel.add(this.cohesionSlider);
 
 		this.simulationPanel.add(BorderLayout.SOUTH, slidersPanel);
-
-		this.enteringPanel = new EnteringPanel(this, this.controller, this.frame);
 	}
 
-	public void createBoidsPanel() {
+	public void setPanel(final JPanel panel) {
 		this.frame.getContentPane().removeAll();
-		this.frame.add(this.simulationPanel);
+		this.frame.add(panel);
 		this.frame.revalidate();
 		this.frame.setSize(this.width, this.height);
 		this.frame.repaint();
@@ -104,4 +120,7 @@ public class BoidsView implements ChangeListener {
 		return this.height;
 	}
 
+	public JPanel getSimulationPanel() {
+		return this.simulationPanel;
+	}
 }

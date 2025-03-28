@@ -2,7 +2,6 @@ package pcd.ass01;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 
 public class SimulationController {
 
@@ -22,11 +21,10 @@ public class SimulationController {
     BoidsModel model;
     final BoidsView view;
     List<ComputeWorker> workers;
-    //CyclicBarrier barrierVel;
-    //CyclicBarrier barrierPos;
     Barrier barrierVel;
     Barrier barrierPos;
     GUIWorker guiWorker;
+    private final Flag stopFlag = new Flag();
 
     public SimulationController() {
         this.view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -43,20 +41,24 @@ public class SimulationController {
         this.workers = new ArrayList<>();
         final int nWorkers = Runtime.getRuntime().availableProcessors();
         final int size = nBoids / nWorkers;
-        //this.barrierVel = new CyclicBarrier(nWorkers + 1);
-        //this.barrierPos = new CyclicBarrier(nWorkers + 1);
         this.barrierVel = new BarrierImpl(nWorkers + 1);
         this.barrierPos = new BarrierImpl(nWorkers + 1);
-        this.guiWorker = new GUIWorker(this.view, this.barrierVel, this.barrierPos);
+        this.stopFlag.reset();
+        this.guiWorker = new GUIWorker(this.view, this.barrierVel, this.barrierPos, this.stopFlag);
         for (int i = 0; i < nWorkers; i++) {
             final int start = i * size;
             final int end = (i != nWorkers - 1) ? (i + 1) * size : nBoids;
-            this.workers.add(new ComputeWorker(this.model, this.barrierVel, this.barrierPos, start, end));
+            this.workers.add(new ComputeWorker(this.model, this.barrierVel, this.barrierPos, start, end,
+                    this.stopFlag));
         }
         for (final ComputeWorker w: this.workers) {
             w.start();
         }
         this.guiWorker.start();
+    }
+
+    public void stopSimulation() {
+        this.stopFlag.set();
     }
 
     public double getWidth() {

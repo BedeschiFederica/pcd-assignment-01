@@ -26,7 +26,6 @@ public class BarrierImpl implements Barrier {
         try {
             this.lock.lock();
             this.countArrived++;
-            //System.out.println("Arrived: " + this.countArrived);
             if (this.countArrived == this.nParticipants) {
                 this.ready.signalAll();
                 this.countRestarted = this.countArrived - 1;
@@ -35,7 +34,6 @@ public class BarrierImpl implements Barrier {
                     this.ready.await();
                 }
                 this.countRestarted--;
-                //System.out.println("Restarted: " + this.countRestarted);
                 if (this.countRestarted == 0) {
                     this.countArrived -= this.nParticipants;
                 }

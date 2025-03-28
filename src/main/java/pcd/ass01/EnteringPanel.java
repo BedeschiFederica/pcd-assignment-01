@@ -47,7 +47,8 @@ public class EnteringPanel extends JPanel {
             try {
                 final int nBoids = Integer.parseInt(this.field.getText());
                 if (nBoids > 0) {
-                    this.view.createBoidsPanel();
+                    this.view.createSimulationPanel();
+                    this.view.setPanel(this.view.getSimulationPanel());
                     controller.startSimulation(nBoids);
                 } else {
                     System.err.println("Illegal value inserted! Positive integer is requested.");
