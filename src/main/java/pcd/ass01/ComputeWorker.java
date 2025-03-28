@@ -6,12 +6,14 @@ import java.util.concurrent.CyclicBarrier;
 public class ComputeWorker extends Thread {
 
 	private final BoidsModel model;
-	private final CyclicBarrier barrierVel;
-	private final CyclicBarrier barrierPos;
+	//private final CyclicBarrier barrierVel;
+	//private final CyclicBarrier barrierPos;
+	private final Barrier barrierVel;
+	private final Barrier barrierPos;
 	private final int start;
 	private final int end;
 
-	public ComputeWorker(final BoidsModel model, final CyclicBarrier barrierVel, final CyclicBarrier barrierPos,
+	public ComputeWorker(final BoidsModel model, final Barrier barrierVel, final Barrier barrierPos, //final CyclicBarrier barrierVel, final CyclicBarrier barrierPos,
 						 final int start, final int end) {
 		super("worker");
 		this.model = model;
@@ -31,12 +33,13 @@ public class ComputeWorker extends Thread {
 			for (final SynchBoid boid: boids) {
 				boid.updateVelocity(this.model);
 			}
-
+			log("wait vel");
             try {
                 this.barrierVel.await();
-            } catch (final InterruptedException | BrokenBarrierException e) {
+            } catch (final InterruptedException e) {// | BrokenBarrierException e) {
                 throw new RuntimeException(e);
             }
+			log("update pos");
 
             /*
 			 * ...then update positions
@@ -45,11 +48,13 @@ public class ComputeWorker extends Thread {
 				boid.updatePos(this.model);
 			}
 
+			log("wait pos");
 			try {
 				this.barrierPos.await();
-			} catch (final InterruptedException | BrokenBarrierException e) {
+			} catch (final InterruptedException e) { //| BrokenBarrierException e) {
 				throw new RuntimeException(e);
 			}
+			log("update vel");
 		}
 	}
 

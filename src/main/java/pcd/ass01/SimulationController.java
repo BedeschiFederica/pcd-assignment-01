@@ -22,8 +22,10 @@ public class SimulationController {
     BoidsModel model;
     final BoidsView view;
     List<ComputeWorker> workers;
-    CyclicBarrier barrierVel;
-    CyclicBarrier barrierPos;
+    //CyclicBarrier barrierVel;
+    //CyclicBarrier barrierPos;
+    Barrier barrierVel;
+    Barrier barrierPos;
     GUIWorker guiWorker;
 
     public SimulationController() {
@@ -41,13 +43,15 @@ public class SimulationController {
         this.workers = new ArrayList<>();
         final int nWorkers = Runtime.getRuntime().availableProcessors();
         final int size = nBoids / nWorkers;
-        this.barrierVel = new CyclicBarrier(nWorkers + 1);
-        this.barrierPos = new CyclicBarrier(nWorkers + 1);
-        this.guiWorker = new GUIWorker(view, barrierVel, barrierPos);
+        //this.barrierVel = new CyclicBarrier(nWorkers + 1);
+        //this.barrierPos = new CyclicBarrier(nWorkers + 1);
+        this.barrierVel = new BarrierImpl(nWorkers + 1);
+        this.barrierPos = new BarrierImpl(nWorkers + 1);
+        this.guiWorker = new GUIWorker(this.view, this.barrierVel, this.barrierPos);
         for (int i = 0; i < nWorkers; i++) {
             final int start = i * size;
             final int end = (i != nWorkers - 1) ? (i + 1) * size : nBoids;
-            workers.add(new ComputeWorker(model, barrierVel, barrierPos, start, end));
+            this.workers.add(new ComputeWorker(this.model, this.barrierVel, this.barrierPos, start, end));
         }
         for (final ComputeWorker w: this.workers) {
             w.start();

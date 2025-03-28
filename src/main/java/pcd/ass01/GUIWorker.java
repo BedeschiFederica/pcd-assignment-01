@@ -5,14 +5,16 @@ import java.util.concurrent.CyclicBarrier;
 
 public class GUIWorker extends Thread {
 
-    private final CyclicBarrier barrierVel;
-    private final CyclicBarrier barrierPos;
+    //private final CyclicBarrier barrierVel;
+    //private final CyclicBarrier barrierPos;
+    private final Barrier barrierVel;
+    private final Barrier barrierPos;
     private final BoidsView view;
 
     private static final int FRAMERATE = 1000;
     private int frameRate;
 
-    public GUIWorker(final BoidsView view, final CyclicBarrier barrierVel, final CyclicBarrier barrierPos) {
+    public GUIWorker(final BoidsView view, final Barrier barrierVel, final Barrier barrierPos) { //, final CyclicBarrier barrierVel, final CyclicBarrier barrierPos) {
         this.view = view;
         this.barrierVel = barrierVel;
         this.barrierPos = barrierPos;
@@ -24,13 +26,13 @@ public class GUIWorker extends Thread {
 
             try {
                 this.barrierVel.await();
-            } catch (final InterruptedException | BrokenBarrierException e) {
+            } catch (final InterruptedException e) { //| BrokenBarrierException e) {
                 throw new RuntimeException(e);
             }
 
             try {
                 this.barrierPos.await();
-            } catch (final InterruptedException | BrokenBarrierException e) {
+            } catch (final InterruptedException e) { //| BrokenBarrierException e) {
                 throw new RuntimeException(e);
             }
 
