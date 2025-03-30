@@ -1,5 +1,8 @@
 package pcd.ass01.multithreaded;
 
+import pcd.ass01.utility.BoidsView;
+import pcd.ass01.utility.Flag;
+
 public class GUIWorker extends Thread {
 
     private final Barrier barrierVel;

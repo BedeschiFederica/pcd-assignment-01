@@ -1,4 +1,4 @@
-package pcd.ass01.multithreaded;
+package pcd.ass01.utility;
 
 public class Flag {
 

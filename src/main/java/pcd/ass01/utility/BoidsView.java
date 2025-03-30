@@ -1,4 +1,4 @@
-package pcd.ass01.multithreaded;
+package pcd.ass01.utility;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -17,7 +17,7 @@ public class BoidsView implements ChangeListener {
 	private final SimulationController controller;
 	private final int width, height;
 
-	public BoidsView(final SimulationController controller, final int width, final int height) {
+	public BoidsView(final pcd.ass01.utility.SimulationController controller, final int width, final int height) {
 		this.controller = controller;
 
 		this.width = width;

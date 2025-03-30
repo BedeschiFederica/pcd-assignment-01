@@ -1,4 +1,4 @@
-package pcd.ass01.multithreaded;
+package pcd.ass01.utility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,7 +7,7 @@ import java.util.List;
 public class BoidsPanel extends JPanel {
 
 	private final BoidsView view;
-	private final SimulationController controller;
+	private final pcd.ass01.utility.SimulationController controller;
     private int frameRate;
 
     public BoidsPanel(final BoidsView view, final SimulationController controller) {

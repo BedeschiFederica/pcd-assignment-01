@@ -1,5 +1,9 @@
 package pcd.ass01.multithreaded;
 
+import pcd.ass01.utility.BoidsModel;
+import pcd.ass01.utility.Flag;
+import pcd.ass01.utility.SynchBoid;
+
 public class ComputeWorker extends Thread {
 
 	private final BoidsModel model;
