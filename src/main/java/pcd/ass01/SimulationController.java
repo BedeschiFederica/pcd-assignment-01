@@ -24,11 +24,12 @@ public class SimulationController {
     Barrier barrierVel;
     Barrier barrierPos;
     GUIWorker guiWorker;
-    private final Flag stopFlag = new Flag();
+    private final Flag stopFlag;
     private final SuspendMonitor suspendMonitor;
 
     public SimulationController() {
         this.suspendMonitor = new SuspendMonitor();
+        this.stopFlag = new Flag();
         this.view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 

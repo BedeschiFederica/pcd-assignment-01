@@ -42,12 +42,10 @@ public class GUIWorker extends Thread {
             final long t1 = System.currentTimeMillis();
             final long dtElapsed = t1 - t0;
             final int frameRatePeriod = 1000 / FRAMERATE;
-            log(dtElapsed + " " + frameRatePeriod);
-
             if (dtElapsed < frameRatePeriod) {
                 try {
                     Thread.sleep(frameRatePeriod - dtElapsed);
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                 }
                 this.frameRate = FRAMERATE;
             } else {

@@ -4,9 +4,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/*
- * Barrier - to be implemented
- */
 public class BarrierImpl implements Barrier {
 
     private final int nParticipants;

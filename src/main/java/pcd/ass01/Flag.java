@@ -5,18 +5,18 @@ public class Flag {
 	private boolean flag;
 	
 	public Flag() {
-		flag = false;
+		this.flag = false;
 	}
 	
 	public synchronized void reset() {
-		flag = false;
+		this.flag = false;
 	}
 	
 	public synchronized void set() {
-		flag = true;
+		this.flag = true;
 	}
 	
 	public synchronized boolean isSet() {
-		return flag;
+		return this.flag;
 	}
 }

@@ -28,8 +28,6 @@ public class BoidsPanel extends JPanel {
         final int h = this.view.getHeight();
         final double envWidth = this.controller.getWidth();
         final double xScale = w / envWidth;
-        // var envHeight = model.getHeight();
-        // var yScale = h/envHeight;
 
         final List<SynchBoid> boids = this.controller.getBoids();
 

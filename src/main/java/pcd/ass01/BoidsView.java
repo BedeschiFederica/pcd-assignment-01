@@ -10,9 +10,8 @@ import java.util.Hashtable;
 public class BoidsView implements ChangeListener {
 
 	private final JFrame frame;
-	JPanel simulationPanel;
+	private JPanel simulationPanel;
 	private BoidsPanel boidsPanel;
-	private JPanel buttonsPanel;
 	private EnteringPanel enteringPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private final SimulationController controller;
@@ -37,25 +36,8 @@ public class BoidsView implements ChangeListener {
 		final LayoutManager layout = new BorderLayout();
 		this.simulationPanel.setLayout(layout);
 
-		this.buttonsPanel = new JPanel(new FlowLayout());
-		JButton stopButton = new JButton("Stop");
-		stopButton.addActionListener(e -> {
-			this.enteringPanel = new EnteringPanel(this, this.controller, this.frame);
-			this.controller.stopSimulation();
-		});
-		JButton suspendResumeButton = new JButton("Suspend");
-		suspendResumeButton.addActionListener(e -> {
-			if (suspendResumeButton.getText().equals("Suspend")) {
-				suspendResumeButton.setText("Resume");
-				this.controller.suspendSimulation();
-			} else {
-				suspendResumeButton.setText("Suspend");
-				this.controller.resumeSimulation();
-			}
-		});
-		this.buttonsPanel.add(stopButton);
-		this.buttonsPanel.add(suspendResumeButton);
-		this.simulationPanel.add(BorderLayout.NORTH, this.buttonsPanel);
+		final JPanel buttonsPanel = createButtonsPanel();
+		this.simulationPanel.add(BorderLayout.NORTH, buttonsPanel);
 
 		this.boidsPanel = new BoidsPanel(this, this.controller);
 		this.simulationPanel.add(BorderLayout.CENTER, this.boidsPanel);
@@ -74,6 +56,28 @@ public class BoidsView implements ChangeListener {
 		slidersPanel.add(this.cohesionSlider);
 
 		this.simulationPanel.add(BorderLayout.SOUTH, slidersPanel);
+	}
+
+	private JPanel createButtonsPanel() {
+		final JPanel buttonsPanel = new JPanel(new FlowLayout());
+		JButton stopButton = new JButton("Stop");
+		stopButton.addActionListener(e -> {
+			this.enteringPanel = new EnteringPanel(this, this.controller, this.frame);
+			this.controller.stopSimulation();
+		});
+		JButton suspendResumeButton = new JButton("Suspend");
+		suspendResumeButton.addActionListener(e -> {
+			if (suspendResumeButton.getText().equals("Suspend")) {
+				suspendResumeButton.setText("Resume");
+				this.controller.suspendSimulation();
+			} else {
+				suspendResumeButton.setText("Suspend");
+				this.controller.resumeSimulation();
+			}
+		});
+		buttonsPanel.add(stopButton);
+		buttonsPanel.add(suspendResumeButton);
+		return buttonsPanel;
 	}
 
 	public void setPanel(final JPanel panel) {

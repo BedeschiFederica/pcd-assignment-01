@@ -12,7 +12,7 @@ public class ComputeWorker extends Thread {
 
 	public ComputeWorker(final BoidsModel model, final Barrier barrierVel, final Barrier barrierPos,
 						 final int start, final int end, final Flag stopFlag, final SuspendMonitor suspendMonitor) {
-		super("worker");
+		super("compute-worker");
 		this.model = model;
 		this.barrierVel = barrierVel;
 		this.barrierPos = barrierPos;
@@ -28,34 +28,23 @@ public class ComputeWorker extends Thread {
 
 			var boids = this.model.getPartitionedBoids(this.start, this.end);
 
-			/*
-			 * Improved correctness: first update velocities...
-			 */
 			for (final SynchBoid boid: boids) {
 				boid.updateVelocity(this.model);
 			}
-			log("wait vel");
             try {
                 this.barrierVel.await();
             } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
-			log("update pos");
 
-            /*
-			 * ...then update positions
-			 */
 			for (final SynchBoid boid: boids) {
 				boid.updatePos(this.model);
 			}
-
-			log("wait pos");
 			try {
 				this.barrierPos.await();
 			} catch (final InterruptedException e) {
 				throw new RuntimeException(e);
 			}
-			log("update vel");
 		}
 	}
 

@@ -9,6 +9,11 @@ package pcd.ass01;
  */
 public interface Barrier {
 
+	/**
+	 * Agent await the arrival of all other agents.
+	 *
+	 * @throws InterruptedException
+	 */
 	void await() throws InterruptedException;
 
 }
