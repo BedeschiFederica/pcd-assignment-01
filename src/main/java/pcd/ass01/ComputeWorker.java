@@ -8,9 +8,10 @@ public class ComputeWorker extends Thread {
 	private final int start;
 	private final int end;
 	private final Flag stopFlag;
+	private final SuspendMonitor suspendMonitor;
 
 	public ComputeWorker(final BoidsModel model, final Barrier barrierVel, final Barrier barrierPos,
-						 final int start, final int end, final Flag stopFlag) {
+						 final int start, final int end, final Flag stopFlag, final SuspendMonitor suspendMonitor) {
 		super("worker");
 		this.model = model;
 		this.barrierVel = barrierVel;
@@ -18,10 +19,13 @@ public class ComputeWorker extends Thread {
 		this.start = start;
 		this.end = end;
 		this.stopFlag = stopFlag;
+		this.suspendMonitor = suspendMonitor;
 	}
 
 	public void run() {
 		while (!this.stopFlag.isSet()) {
+			this.suspendMonitor.suspendIfRequested();
+
 			var boids = this.model.getPartitionedBoids(this.start, this.end);
 
 			/*

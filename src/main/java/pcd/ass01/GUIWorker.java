@@ -6,19 +6,24 @@ public class GUIWorker extends Thread {
     private final Barrier barrierPos;
     private final BoidsView view;
     private final Flag stopFlag;
+    private final SuspendMonitor suspendMonitor;
 
     private static final int FRAMERATE = 1000;
     private int frameRate;
 
-    public GUIWorker(final BoidsView view, final Barrier barrierVel, final Barrier barrierPos, final Flag stopFlag) {
+    public GUIWorker(final BoidsView view, final Barrier barrierVel, final Barrier barrierPos, final Flag stopFlag,
+                     final SuspendMonitor suspendMonitor) {
         this.view = view;
         this.barrierVel = barrierVel;
         this.barrierPos = barrierPos;
         this.stopFlag = stopFlag;
+        this.suspendMonitor = suspendMonitor;
     }
 
     public void run() {
         while (!this.stopFlag.isSet()) {
+            this.suspendMonitor.suspendIfRequested();
+
             final long t0 = System.currentTimeMillis();
 
             try {

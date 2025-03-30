@@ -44,6 +44,15 @@ public class BoidsView implements ChangeListener {
 			this.controller.stopSimulation();
 		});
 		JButton suspendResumeButton = new JButton("Suspend");
+		suspendResumeButton.addActionListener(e -> {
+			if (suspendResumeButton.getText().equals("Suspend")) {
+				suspendResumeButton.setText("Resume");
+				this.controller.suspendSimulation();
+			} else {
+				suspendResumeButton.setText("Suspend");
+				this.controller.resumeSimulation();
+			}
+		});
 		this.buttonsPanel.add(stopButton);
 		this.buttonsPanel.add(suspendResumeButton);
 		this.simulationPanel.add(BorderLayout.NORTH, this.buttonsPanel);

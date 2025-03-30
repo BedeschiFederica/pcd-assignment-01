@@ -25,8 +25,10 @@ public class SimulationController {
     Barrier barrierPos;
     GUIWorker guiWorker;
     private final Flag stopFlag = new Flag();
+    private final SuspendMonitor suspendMonitor;
 
     public SimulationController() {
+        this.suspendMonitor = new SuspendMonitor();
         this.view = new BoidsView(this, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
@@ -44,12 +46,13 @@ public class SimulationController {
         this.barrierVel = new BarrierImpl(nWorkers + 1);
         this.barrierPos = new BarrierImpl(nWorkers + 1);
         this.stopFlag.reset();
-        this.guiWorker = new GUIWorker(this.view, this.barrierVel, this.barrierPos, this.stopFlag);
+        this.suspendMonitor.resume();
+        this.guiWorker = new GUIWorker(this.view, this.barrierVel, this.barrierPos, this.stopFlag, this.suspendMonitor);
         for (int i = 0; i < nWorkers; i++) {
             final int start = i * size;
             final int end = (i != nWorkers - 1) ? (i + 1) * size : nBoids;
             this.workers.add(new ComputeWorker(this.model, this.barrierVel, this.barrierPos, start, end,
-                    this.stopFlag));
+                    this.stopFlag, this.suspendMonitor));
         }
         for (final ComputeWorker w: this.workers) {
             w.start();
@@ -59,6 +62,14 @@ public class SimulationController {
 
     public void stopSimulation() {
         this.stopFlag.set();
+    }
+
+    public void suspendSimulation() {
+        this.suspendMonitor.setSuspend();
+    }
+
+    public void resumeSimulation() {
+        this.suspendMonitor.resume();
     }
 
     public double getWidth() {
