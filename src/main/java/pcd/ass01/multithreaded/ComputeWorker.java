@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.multithreaded;
 
 public class ComputeWorker extends Thread {
 
