@@ -2,6 +2,7 @@ package pcd.ass01.multithreaded;
 
 import pcd.ass01.utility.BoidsView;
 import pcd.ass01.utility.Flag;
+import pcd.ass01.utility.SuspendMonitor;
 
 public class GUIWorker extends Thread {
 

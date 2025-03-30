@@ -1,8 +1,6 @@
 package pcd.ass01.tasks;
 
-import pcd.ass01.utility.BoidsModel;
-import pcd.ass01.utility.BoidsView;
-import pcd.ass01.utility.SynchBoid;
+import pcd.ass01.utility.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,11 +11,15 @@ public class MasterWorker extends Thread {
     private final BoidsModel model;
     private final BoidsView view;
     private ExecutorService exec;
+    private final Flag stopFlag;
+    private final SuspendMonitor suspendMonitor;
 
-    public MasterWorker(final BoidsModel model, final BoidsView view) {
+    public MasterWorker(final BoidsModel model, final BoidsView view, final Flag stopFlag, final SuspendMonitor suspendMonitor) {
         super("master-worker");
         this.model = model;
         this.view = view;
+        this.stopFlag = stopFlag;
+        this.suspendMonitor = suspendMonitor;
     }
 
     public void updateVelocity() {
@@ -59,7 +61,8 @@ public class MasterWorker extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        while (!this.stopFlag.isSet()) {
+            this.suspendMonitor.suspendIfRequested();
             final long t0 = System.currentTimeMillis();
             this.updateVelocity();
             this.updatePos();
