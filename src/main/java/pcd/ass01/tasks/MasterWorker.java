@@ -13,17 +13,20 @@ public class MasterWorker extends Thread {
     private ExecutorService exec;
     private final Flag stopFlag;
     private final SuspendMonitor suspendMonitor;
+    private final int nThreads;
 
-    public MasterWorker(final BoidsModel model, final BoidsView view, final Flag stopFlag, final SuspendMonitor suspendMonitor) {
+    public MasterWorker(final BoidsModel model, final BoidsView view, final Flag stopFlag,
+                        final SuspendMonitor suspendMonitor, final int nThreads) {
         super("master-worker");
         this.model = model;
         this.view = view;
         this.stopFlag = stopFlag;
         this.suspendMonitor = suspendMonitor;
+        this.nThreads = nThreads;
     }
 
     public void updateVelocity() {
-        this.exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+        this.exec = Executors.newFixedThreadPool(this.nThreads);
         try {
             for (final SynchBoid boid: this.model.getBoids()){
                 this.exec.execute(new UpdateVelocityTask(this.model, boid));
@@ -36,7 +39,7 @@ public class MasterWorker extends Thread {
     }
 
     public void updatePos() {
-        this.exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+        this.exec = Executors.newFixedThreadPool(this.nThreads);
         try {
             for (final SynchBoid boid: this.model.getBoids()){
                 this.exec.execute(new UpdatePositionTask(this.model, boid));
@@ -49,7 +52,7 @@ public class MasterWorker extends Thread {
     }
 
     public void updateGUI(final long t0) {
-        this.exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+        this.exec = Executors.newFixedThreadPool(this.nThreads);
         try {
             this.exec.execute(new UpdateGUITask(this.view, t0));
             this.exec.shutdown();
