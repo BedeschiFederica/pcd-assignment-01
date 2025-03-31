@@ -1,10 +1,6 @@
-package pcd.ass01.multithreaded;
+package pcd.ass01.utility;
 
-import pcd.ass01.utility.BoidsView;
-import pcd.ass01.utility.Flag;
-import pcd.ass01.utility.SuspendMonitor;
-
-public class GUIWorker extends Thread {
+public class GUIWorker implements Runnable {
 
     private final Barrier barrierVel;
     private final Barrier barrierPos;
@@ -60,7 +56,7 @@ public class GUIWorker extends Thread {
 
     private void log(final String st){
         synchronized(System.out) {
-            System.out.println("[" + this.getName() + "] " + st);
+            System.out.println("[GUIWorker ] " + st);
         }
     }
 

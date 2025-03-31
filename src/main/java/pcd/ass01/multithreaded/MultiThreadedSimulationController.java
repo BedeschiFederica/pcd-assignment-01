@@ -19,7 +19,6 @@ public class MultiThreadedSimulationController extends AbstractSimulationControl
         final int size = nBoids / nWorkers;
         Barrier barrierVel = new BarrierImpl(nWorkers + 1);
         Barrier barrierPos = new BarrierImpl(nWorkers + 1);
-        GUIWorker guiWorker = new GUIWorker(this.view, barrierVel, barrierPos, this.stopFlag, this.suspendMonitor);
         for (int i = 0; i < nWorkers; i++) {
             final int start = i * size;
             final int end = (i != nWorkers - 1) ? (i + 1) * size : nBoids;
@@ -29,6 +28,6 @@ public class MultiThreadedSimulationController extends AbstractSimulationControl
         for (final ComputeWorker w: workers) {
             w.start();
         }
-        guiWorker.start();
+        new Thread(new GUIWorker(this.view, barrierVel, barrierPos, this.stopFlag, this.suspendMonitor)).start();
     }
 }
