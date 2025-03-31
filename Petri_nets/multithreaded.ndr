@@ -1,0 +1,29 @@
+t 145.0 105.0 t0 c 0 w n updateVelocity n
+t 425.0 105.0 t1 c 0 w n barrierVel n
+p 570.0 105.0 p5 0 n
+p 300.0 105.0 p1 0 n
+t 710.0 105.0 t5 c 0 w n updatePos n
+p 835.0 105.0 p7 0 n
+t 1005.0 105.0 t4 c 0 w n barrierPos n
+p 315.0 260.0 p3 1 n
+p 690.0 275.0 p8 0 n
+p 1055.0 250.0 p9 0 n
+t 695.0 455.0 t2 c 0 w n update n
+p 30.0 105.0 p0 8 n N s
+e t2 p3 1 n
+e p9 t2 1 n
+e t4 p9 1 n
+e p8 t4 1 n
+e t1 p8 1 n
+e p3 t1 1 n
+e p7 t4 8 nw
+e t5 p7 1 n
+e p5 t5 1 n
+e t4 0.4122613958 173.738309 p0 0.07626186458 201.7176244 8 n
+e t1 p5 8 n
+e p1 t1 8 n
+e t0 p1 1 n
+e p0 t0 1 n
+h multithreaded
+
+
