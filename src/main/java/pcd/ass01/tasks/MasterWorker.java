@@ -2,9 +2,7 @@ package pcd.ass01.tasks;
 
 import pcd.ass01.utility.*;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class MasterWorker extends Thread {
 
@@ -14,6 +12,7 @@ public class MasterWorker extends Thread {
     private final Flag stopFlag;
     private final SuspendMonitor suspendMonitor;
     private final int nThreads;
+    private long t0;
 
     public MasterWorker(final BoidsModel model, final BoidsView view, final Flag stopFlag,
                         final SuspendMonitor suspendMonitor, final int nThreads) {
@@ -25,15 +24,17 @@ public class MasterWorker extends Thread {
         this.nThreads = nThreads;
     }
 
-    public void updateVelocity() {
+    public void updateViewAndVelocity() {
         this.exec = Executors.newFixedThreadPool(this.nThreads);
         try {
+            final Future<Long> futureT0 = this.exec.submit(new UpdateGUITask(this.view, this.t0));
             for (final SynchBoid boid: this.model.getBoids()){
                 this.exec.execute(new UpdateVelocityTask(this.model, boid));
             }
+            this.t0 = futureT0.get();
             this.exec.shutdown();
             this.exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-        } catch (final InterruptedException ex){
+        } catch (final InterruptedException | ExecutionException ex){
             throw new RuntimeException();
         }
     }
@@ -51,25 +52,12 @@ public class MasterWorker extends Thread {
         }
     }
 
-    public void updateGUI(final long t0) {
-        this.exec = Executors.newFixedThreadPool(this.nThreads);
-        try {
-            this.exec.execute(new UpdateGUITask(this.view, t0));
-            this.exec.shutdown();
-            this.exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-        } catch (final InterruptedException ex){
-            throw new RuntimeException();
-        }
-    }
-
     @Override
     public void run() {
         while (!this.stopFlag.isSet()) {
             this.suspendMonitor.suspendIfRequested();
-            final long t0 = System.currentTimeMillis();
-            this.updateVelocity();
+            this.updateViewAndVelocity();
             this.updatePos();
-            this.updateGUI(t0);
         }
     }
 

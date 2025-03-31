@@ -2,7 +2,9 @@ package pcd.ass01.tasks;
 
 import pcd.ass01.utility.BoidsView;
 
-public class UpdateGUITask implements Runnable {
+import java.util.concurrent.Callable;
+
+public class UpdateGUITask implements Callable<Long> {
 
     private final BoidsView view;
     private final long t0;
@@ -15,7 +17,7 @@ public class UpdateGUITask implements Runnable {
     }
 
     @Override
-    public void run() {
+    public Long call() {
         final long t1 = System.currentTimeMillis();
         final long dtElapsed = t1 - this.t0;
         final int frameRatePeriod = 1000 / FRAMERATE;
@@ -30,5 +32,6 @@ public class UpdateGUITask implements Runnable {
             frameRate = (int) (1000 / dtElapsed);
         }
         this.view.update(frameRate);
+        return System.currentTimeMillis();
     }
 }
