@@ -10,7 +10,8 @@ public class UpdateVelocityTask extends AbstractUpdateTask {
     }
 
     @Override
-    public void run() {
+    public Void call() {
         this.boid.updateVelocity(this.model);
+        return null;
     }
 }

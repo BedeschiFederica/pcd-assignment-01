@@ -10,7 +10,8 @@ public class UpdatePositionTask extends AbstractUpdateTask {
     }
 
     @Override
-    public void run() {
+    public Void call() {
         this.boid.updatePos(this.model);
+        return null;
     }
 }

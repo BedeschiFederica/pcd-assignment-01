@@ -3,7 +3,9 @@ package pcd.ass01.tasks;
 import pcd.ass01.utility.BoidsModel;
 import pcd.ass01.utility.SynchBoid;
 
-public abstract class AbstractUpdateTask implements Runnable {
+import java.util.concurrent.Callable;
+
+public abstract class AbstractUpdateTask implements Callable<Void> {
 
     protected final BoidsModel model;
     protected final SynchBoid boid;
@@ -12,5 +14,4 @@ public abstract class AbstractUpdateTask implements Runnable {
         this.model = model;
         this.boid = boid;
     }
-
 }
