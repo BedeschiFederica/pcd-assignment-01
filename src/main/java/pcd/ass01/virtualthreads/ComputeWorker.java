@@ -2,6 +2,8 @@ package pcd.ass01.virtualthreads;
 
 import pcd.ass01.utility.*;
 
+import static pcd.ass01.virtualthreads.VirtualThreadsSimulationController.avg;
+
 public class ComputeWorker implements Runnable {
 
 	private final BoidsModel model;
@@ -22,7 +24,8 @@ public class ComputeWorker implements Runnable {
 	}
 
 	public void run() {
-		while (!this.stopFlag.isSet()) {
+		//while (!this.stopFlag.isSet()) {
+		for (int i = 0; i < 500; i++) {
 			this.suspendMonitor.suspendIfRequested();
 
 			this.boid.updateVelocity(this.model);
@@ -41,6 +44,7 @@ public class ComputeWorker implements Runnable {
 				throw new RuntimeException(e);
 			}
 		}
+		System.out.println("Compute time: " + (System.currentTimeMillis() - avg) / 500);
 	}
 
 	private void log(String st){

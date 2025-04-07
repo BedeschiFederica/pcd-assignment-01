@@ -2,6 +2,8 @@ package pcd.ass01.multithreaded;
 
 import pcd.ass01.utility.*;
 
+import static pcd.ass01.multithreaded.MultiThreadedSimulationController.avg;
+
 public class ComputeWorker extends Thread {
 
 	private final BoidsModel model;
@@ -25,7 +27,8 @@ public class ComputeWorker extends Thread {
 	}
 
 	public void run() {
-		while (!this.stopFlag.isSet()) {
+		//while (!this.stopFlag.isSet()) {
+		for (int i = 0; i < 500; i++) {
 			this.suspendMonitor.suspendIfRequested();
 
 			var boids = this.model.getPartitionedBoids(this.start, this.end);
@@ -48,6 +51,7 @@ public class ComputeWorker extends Thread {
 				throw new RuntimeException(e);
 			}
 		}
+		System.out.println((System.currentTimeMillis() - avg) / 500);
 	}
 
 	private void log(String st){

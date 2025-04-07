@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static pcd.ass01.multithreaded.MultiThreadedSimulationController.avg;
+
 public class MasterWorker extends Thread {
 
     private final BoidsModel model;
@@ -62,10 +64,13 @@ public class MasterWorker extends Thread {
 
     @Override
     public void run() {
-        while (!this.stopFlag.isSet()) {
+        //while (!this.stopFlag.isSet()) {
+        long avg = System.currentTimeMillis();
+        for (int i = 0; i < 500; i++) {
             this.suspendMonitor.suspendIfRequested();
             this.update();
         }
+        System.out.println((System.currentTimeMillis() - avg) / 500);
         this.stopExecutor();
     }
 

@@ -1,5 +1,7 @@
 package pcd.ass01.utility;
 
+import static pcd.ass01.virtualthreads.VirtualThreadsSimulationController.avg;
+
 public class GUIWorker implements Runnable {
 
     private final Barrier barrierVel;
@@ -22,7 +24,8 @@ public class GUIWorker implements Runnable {
     }
 
     public void run() {
-        while (!this.stopFlag.isSet()) {
+        //while (!this.stopFlag.isSet()) {
+        for (int i = 0; i < 500; i++) {
             this.suspendMonitor.suspendIfRequested();
 
             try {
@@ -52,6 +55,7 @@ public class GUIWorker implements Runnable {
             this.view.update(this.frameRate);
             this.t0 = System.currentTimeMillis();
         }
+        System.out.println("GUI time: " + (System.currentTimeMillis() - avg) / 500);
     }
 
     private void log(final String st){

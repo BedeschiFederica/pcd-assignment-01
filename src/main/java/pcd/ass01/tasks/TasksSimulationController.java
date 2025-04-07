@@ -4,7 +4,7 @@ import pcd.ass01.utility.*;
 
 public class TasksSimulationController extends AbstractSimulationController {
 
-    private static final int N_THREADS = Runtime.getRuntime().availableProcessors() + 1;
+    private static final int N_THREADS = 3; //Runtime.getRuntime().availableProcessors() + 1;
 
     public TasksSimulationController() {
         super();
