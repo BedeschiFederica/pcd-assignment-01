@@ -1,10 +1,13 @@
 package pcd.ass01.utility;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BoidsModel {
     
     private final List<SynchBoid> boids;
+    private final Lock mutex;
     private double separationWeight; 
     private double alignmentWeight; 
     private double cohesionWeight; 
@@ -32,6 +35,8 @@ public class BoidsModel {
         this.maxSpeed = maxSpeed;
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
+
+        this.mutex = new ReentrantLock();
 
         this.boids = new ArrayList<>();
         for (int i = 0; i < nBoids; i++) {
@@ -73,28 +78,58 @@ public class BoidsModel {
     	return this.height;
     }
 
-    public synchronized void setSeparationWeight(final double value) {
-    	this.separationWeight = value;
+    public void setSeparationWeight(final double value) {
+        try {
+            this.mutex.lock();
+            this.separationWeight = value;
+        } finally {
+            this.mutex.unlock();
+        }
     }
 
-    public synchronized void setAlignmentWeight(final double value) {
-    	this.alignmentWeight = value;
+    public void setAlignmentWeight(final double value) {
+        try {
+            this.mutex.lock();
+            this.alignmentWeight = value;
+        } finally {
+            this.mutex.unlock();
+        }
     }
 
-    public synchronized void setCohesionWeight(final double value) {
-    	this.cohesionWeight = value;
+    public void setCohesionWeight(final double value) {
+        try {
+            this.mutex.lock();
+            this.cohesionWeight = value;
+        } finally {
+            this.mutex.unlock();
+        }
     }
 
-    public synchronized double getSeparationWeight() {
-    	return this.separationWeight;
+    public double getSeparationWeight() {
+        try {
+            this.mutex.lock();
+            return this.separationWeight;
+        } finally {
+            this.mutex.unlock();
+        }
     }
 
-    public synchronized double getCohesionWeight() {
-    	return this.cohesionWeight;
+    public double getCohesionWeight() {
+        try {
+            this.mutex.lock();
+            return this.cohesionWeight;
+        } finally {
+            this.mutex.unlock();
+        }
     }
 
-    public synchronized double getAlignmentWeight() {
-    	return this.alignmentWeight;
+    public double getAlignmentWeight() {
+        try {
+            this.mutex.lock();
+            return this.alignmentWeight;
+        } finally {
+            this.mutex.unlock();
+        }
     }
     
     public double getMaxSpeed() {
