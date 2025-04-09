@@ -8,8 +8,7 @@ public class GUIWorker implements Runnable {
     private final Flag stopFlag;
     private final SuspendMonitor suspendMonitor;
 
-    private static final int FRAMERATE = 1000;
-    private int frameRate;
+    private static final int FRAME_RATE = 50;
     private long t0;
 
     public GUIWorker(final BoidsView view, final Barrier barrierVel, final Barrier barrierPos, final Flag stopFlag,
@@ -39,17 +38,18 @@ public class GUIWorker implements Runnable {
 
             final long t1 = System.currentTimeMillis();
             final long dtElapsed = t1 - t0;
-            final int frameRatePeriod = 1000 / FRAMERATE;
+            final int frameRatePeriod = 1000 / FRAME_RATE;
+            int frameRate;
             if (dtElapsed < frameRatePeriod) {
                 try {
                     Thread.sleep(frameRatePeriod - dtElapsed);
                 } catch (final Exception ex) {
                 }
-                this.frameRate = FRAMERATE;
+                frameRate = FRAME_RATE;
             } else {
-                this.frameRate = (int) (1000 / dtElapsed);
+                frameRate = (int) (1000 / dtElapsed);
             }
-            this.view.update(this.frameRate);
+            this.view.update(frameRate);
             this.t0 = System.currentTimeMillis();
         }
     }

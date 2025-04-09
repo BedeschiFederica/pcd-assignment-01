@@ -9,7 +9,7 @@ public class UpdateGUITask implements Callable<Long> {
     private final BoidsView view;
     private final long t0;
 
-    private static final int FRAMERATE = 1000;
+    private static final int FRAME_RATE = 50;
 
     public UpdateGUITask(final BoidsView view, final long t0) {
         this.view = view;
@@ -20,14 +20,14 @@ public class UpdateGUITask implements Callable<Long> {
     public Long call() {
         final long t1 = System.currentTimeMillis();
         final long dtElapsed = t1 - this.t0;
-        final int frameRatePeriod = 1000 / FRAMERATE;
+        final int frameRatePeriod = 1000 / FRAME_RATE;
         int frameRate;
         if (dtElapsed < frameRatePeriod) {
             try {
                 Thread.sleep(frameRatePeriod - dtElapsed);
             } catch (final Exception ex) {
             }
-            frameRate = FRAMERATE;
+            frameRate = FRAME_RATE;
         } else {
             frameRate = (int) (1000 / dtElapsed);
         }
